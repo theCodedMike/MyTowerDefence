@@ -7,12 +7,12 @@ namespace Game
         [Header("生成位置")]
         public Transform start;
 
-        private GameObject skeletonPrefab;
+        private GameObject[] skeletonPrefabs;
 
         // Start is called before the first frame update
         void Start()
         {
-            skeletonPrefab = Resources.Load<GameObject>("Prefabs/Skeletons/CuteSkeleton");
+            skeletonPrefabs = Resources.LoadAll<GameObject>("Prefabs/Skeletons");
         }
 
         // Update is called once per frame
@@ -26,7 +26,9 @@ namespace Game
 
         private void Spawn()
         {
-            Instantiate(skeletonPrefab, start.position, Quaternion.identity);
+            int idx = Random.Range(0, skeletonPrefabs.Length);
+
+            Instantiate(skeletonPrefabs[idx], start.position, Quaternion.identity);
         }
     }
 }

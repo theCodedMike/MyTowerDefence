@@ -10,11 +10,13 @@ namespace Game
         public int totalHp;
 
         public static Action<float> OnDamage;
+        private static readonly int Dead = Animator.StringToHash("Dead");
 
-        private int remainingHp; // 失去的血量
+        private int remainingHp; // 剩余的血量
         private Transform end;
         private NavMeshAgent agent;
         private Animator animator;
+        private Rigidbody rigidbody;
 
         // Start is called before the first frame update
         void Start()
@@ -23,6 +25,7 @@ namespace Game
             end = GameObject.FindWithTag("EndPoint").transform;
             animator = GetComponent<Animator>();
             remainingHp = totalHp;
+            rigidbody = GetComponent<Rigidbody>();
         }
 
         // Update is called once per frame
@@ -50,10 +53,23 @@ namespace Game
                 // 僵尸死亡
                 remainingHp = 0;
                 agent.enabled = false;
-                //animator.SetTrigger("Dead");
+                animator.SetTrigger(Dead);
             }
 
             OnDamage((float)remainingHp / totalHp);
+        }
+
+        private void StartSinking()
+        {
+            transform.Find("Canvas").gameObject.SetActive(false);
+            transform.GetComponent<CapsuleCollider>().isTrigger = true;
+            rigidbody.useGravity = true;
+            Invoke(nameof(Destroy), 1.5f);
+        }
+
+        private void Destroy()
+        {
+            Destroy(this.gameObject);
         }
     }
 }
