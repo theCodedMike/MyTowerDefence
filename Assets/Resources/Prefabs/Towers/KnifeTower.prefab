@@ -77,6 +77,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ada153cd923a49b4daa5da232a700463, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackDistance: 8
+  firePoint: {fileID: 8387513759362057472}
 --- !u!1 &3773723935367626431
 GameObject:
   m_ObjectHideFlags: 0

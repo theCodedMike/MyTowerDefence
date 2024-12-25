@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 14663734665408626}
   m_Layer: 0
   m_Name: KnifeBullet
-  m_TagString: Untagged
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -147,3 +147,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 647f76e2ff2edf34daae483e1d3aabd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveSpeed: 30

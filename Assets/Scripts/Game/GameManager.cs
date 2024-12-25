@@ -27,6 +27,7 @@ namespace Game
             mainCamera = Camera.main;
             UIManager.OnSelectTower = GenTower;
             UIManager.OnSelectMore = HandleMoreService;
+            Skeleton.OnDeath = HandleSkeletonDeath;
         }
 
         // Update is called once per frame
@@ -42,7 +43,6 @@ namespace Game
                     if (basePos.CompareTag("TowerBase"))
                     {
                         currTowerBasePos = basePos.position;
-                        print($"恭喜你，你击中了塔基..., {currTowerBasePos}");
 
                         if (towerBaseMap.ContainsKey(currTowerBasePos))
                         {
@@ -75,7 +75,9 @@ namespace Game
             };
 
             GameObject prefab = Resources.Load<GameObject>(prefabPath);
-            GameObject obj = Instantiate(prefab, currTowerBasePos, Quaternion.identity);
+            Vector3 copyPos = currTowerBasePos;
+            copyPos.y = 0;
+            GameObject obj = Instantiate(prefab, copyPos, Quaternion.identity);
             Tower tower = obj.GetComponent<Tower>();
             tower.SetTowerType(type);
 
@@ -89,6 +91,17 @@ namespace Game
         private void HandleMoreService(MoreType type)
         {
             print($"{type}");
+        }
+
+
+        // 处理僵尸死亡事件
+        private void HandleSkeletonDeath(int score)
+        {
+            this.gold += score;
+            this.score += score;
+
+            UIManager.Instance.UpdateGold(this.gold);
+            UIManager.Instance.UpdateScore(this.score);
         }
     }
 }

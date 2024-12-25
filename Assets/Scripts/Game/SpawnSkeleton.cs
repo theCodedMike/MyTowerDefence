@@ -16,7 +16,7 @@ namespace Game
 
         private GameObject[] skeletonPrefabs;
 
-        private HashSet<Transform> aliveSkeletons = new(32);
+        private List<Transform> aliveSkeletons = new(32);
 
 
         private void Awake()
@@ -62,5 +62,8 @@ namespace Game
                 Debug.LogError($"移除Skeleton的Transform失败：{transform.gameObject}");
             }
         }
+
+        // 获取所有僵尸位置
+        public List<Transform> GetAliveSkeletons() => aliveSkeletons;
     }
 }

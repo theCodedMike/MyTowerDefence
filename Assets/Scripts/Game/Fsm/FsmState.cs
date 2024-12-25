@@ -34,7 +34,6 @@ namespace Game.Fsm
             if (!transitionToStateIdMap.TryAdd(trans, id))
             {
                 Debug.LogError($"{trans}已存在，不能重复添加...");
-                return;
             }
         }
 
@@ -64,12 +63,12 @@ namespace Game.Fsm
         /// <summary>
         /// 转移到此状态前要执行的逻辑
         /// </summary>
-        public virtual void DoBeforeEnterAction() {}
+        public virtual void DoBeforeEnterAction() { }
 
         /// <summary>
         /// 离开此状态后要执行的逻辑
         /// </summary>
-        public virtual void DoAfterLeaveAction() {}
+        public virtual void DoAfterLeaveAction() { }
 
         /// <summary>
         /// 处于本状态时要执行的逻辑

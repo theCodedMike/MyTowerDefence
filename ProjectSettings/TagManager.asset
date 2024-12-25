@@ -9,6 +9,7 @@ TagManager:
   - UICamera
   - TowerBase
   - Ground
+  - Bullet
   layers:
   - Default
   - TransparentFX

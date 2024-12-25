@@ -9,7 +9,9 @@ namespace Game
         [Header("总血量(保持不变)")]
         public int totalHp;
 
-        public static Action<float> OnDamage;
+        public static Action<float> OnDamage; // 受到伤害事件
+        public static Action<int> OnDeath; // 死亡事件
+
         private static readonly int Dead = Animator.StringToHash("Dead");
 
         private int remainingHp; // 剩余的血量
@@ -33,11 +35,6 @@ namespace Game
         {
             if (agent.enabled)
                 agent.SetDestination(end.position);
-
-            if (Input.GetKeyDown(KeyCode.D))
-            {
-                Damage();
-            }
         }
 
 
@@ -54,6 +51,8 @@ namespace Game
                 remainingHp = 0;
                 agent.enabled = false;
                 animator.SetTrigger(Dead);
+                SpawnSkeleton.Instance.RemoveSkeleton(this.transform);
+                OnDeath(10);
             }
 
             OnDamage((float)remainingHp / totalHp);
@@ -62,7 +61,7 @@ namespace Game
         private void StartSinking()
         {
             transform.Find("Canvas").gameObject.SetActive(false);
-            transform.GetComponent<CapsuleCollider>().isTrigger = true;
+            //transform.GetComponent<CapsuleCollider>().isTrigger = true;
             rigidbody.useGravity = true;
             Invoke(nameof(Destroy), 1.5f);
         }
@@ -70,6 +69,14 @@ namespace Game
         private void Destroy()
         {
             Destroy(this.gameObject);
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Bullet"))
+            {
+                Damage();
+            }
         }
     }
 }

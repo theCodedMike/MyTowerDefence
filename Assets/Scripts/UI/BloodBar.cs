@@ -20,10 +20,10 @@ namespace UI
             bloodBar.value = 1f;
             mainCamera = Camera.main;
             uiCamera = Camera.allCameras[1];
-            Skeleton.OnDamage = OnDamageEvent;
+            Skeleton.OnDamage = UpdateBloodBar;
         }
 
-        private void OnDamageEvent(float value)
+        private void UpdateBloodBar(float value)
         {
             bloodBar.value = value;
         }
