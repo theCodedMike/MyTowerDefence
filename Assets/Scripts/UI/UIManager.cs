@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Game;
 using TMPro;
 using UnityEngine;
 
@@ -16,8 +18,29 @@ namespace UI
         [Header("选择炮塔面板")]
         public Transform selectPanel;
 
+        // 在选择塔的面板处选中某个类型的塔的事件
+        public static Action<TowerType> OnSelectTower;
+        // 在更多面板处选中某个服务的事件
+        public static Action<MoreType> OnSelectMore;
+
 
         public static UIManager Instance;
+
+        private static Dictionary<Vector3, Vector3> towerPosToPanelPosMap;
+
+        static UIManager()
+        {
+            towerPosToPanelPosMap = new(16);
+            towerPosToPanelPosMap.Add(new Vector3(-12.0f, -1.0f, -7.0f), new Vector3(390.98f, 616.91f, 0f));
+            towerPosToPanelPosMap.Add(new Vector3(-9.0f, -1.0f, -19.25f), new Vector3(127.67f, 419.03f, 0f));
+            towerPosToPanelPosMap.Add(new Vector3(3.0f, -1.0f, -15.75f), new Vector3(355.87f, 271.42f, 0f));
+            towerPosToPanelPosMap.Add(new Vector3(6.0f, -1.0f, -7.0f), new Vector3(605.62f, 359.99f, 0f));
+            towerPosToPanelPosMap.Add(new Vector3(-3.0f, -1.0f, 8.75f), new Vector3(699.77f, 608.14f, 0f));
+            towerPosToPanelPosMap.Add(new Vector3(-18.0f, -1.0f, 0f), new Vector3(429.28f, 673.57f, 0f));
+            towerPosToPanelPosMap.Add(new Vector3(-18.0f, -1.0f, 21.0f), new Vector3(672.64f, 678.35f, 0f));
+            towerPosToPanelPosMap.Add(new Vector3(-3.0f, -1.0f, 12.25f), new Vector3(989.42f, 678.35f, 0f));
+            towerPosToPanelPosMap.Add(new Vector3(18.0f, -1.0f, 7.0f), new Vector3(1353.27f, 359.99f, 0f));
+        }
 
 
         private void Awake()
@@ -33,12 +56,12 @@ namespace UI
         }
 
 
-        private void UpdateGold(int gold)
+        public void UpdateGold(int gold)
         {
             this.gold.text = $"{gold}";
         }
 
-        private void UpdateScore(int score)
+        public void UpdateScore(int score)
         {
             this.score.text = $"{score}";
         }
@@ -56,15 +79,12 @@ namespace UI
         /// <summary>
         /// 显示更多面板
         /// </summary>
-        public void DisplayMorePanel(float left, float bottom, float right, float top)
+        public void DisplayMorePanel(Vector3 towerBasePos)
         {
             if (selectPanel.gameObject.activeSelf)
                 CloseSelectTowerPanel();
 
-            RectTransform rect = morePanel.GetComponent<RectTransform>();
-            rect.offsetMin = new Vector2(left, bottom);
-            rect.offsetMax = new Vector2(right, top);
-            morePanel.gameObject.SetActive(true);
+            SetPanelPos(towerBasePos, morePanel);
         }
         /// <summary>
         /// 选择服务
@@ -74,7 +94,8 @@ namespace UI
         /// <param name="choice"></param>
         public void SelectChoice(int choice)
         {
-            print($"{(choice == 0 ? "升级" : "出售")}");
+            CloseMorePanel();
+            OnSelectMore((MoreType)choice);
         }
 
 
@@ -88,7 +109,8 @@ namespace UI
         /// <param name="type">类型</param>
         public void SelectTower(int towerType)
         {
-            print($"{(TowerType)towerType}...");
+            CloseSelectTowerPanel();
+            OnSelectTower((TowerType)towerType);
         }
 
         /// <summary>
@@ -97,28 +119,33 @@ namespace UI
         public void CloseSelectTowerPanel()
         {
             selectPanel.gameObject.SetActive(false);
-            print("选择Tower面板关闭");
         }
 
         /// <summary>
         /// 显示选择塔类型面板
         /// </summary>
-        public void DisplaySelectTowerPanel(float left, float bottom, float right, float top)
+        public void DisplaySelectTowerPanel(Vector3 towerBasePos)
         {
             if (morePanel.gameObject.activeSelf)
                 CloseMorePanel();
 
-            RectTransform rect = selectPanel.GetComponent<RectTransform>();
-            rect.offsetMin = new Vector2(left, bottom);
-            rect.offsetMax = new Vector2(right, top);
-            selectPanel.gameObject.SetActive(true);
+            SetPanelPos(towerBasePos, selectPanel);
         }
-    }
 
-    public enum TowerType
-    {
-        LaserTower,
-        KnifeTower,
-        CannonTower,
+
+        // 处理Panel的位置
+        private void SetPanelPos(Vector3 towerBasePos, Transform panel)
+        {
+            if (!towerPosToPanelPosMap.ContainsKey(towerBasePos))
+            {
+                Debug.LogError($"塔基位置错误：{towerBasePos}");
+                return;
+            }
+
+            RectTransform rect = panel.GetComponent<RectTransform>();
+            rect.position = towerPosToPanelPosMap[towerBasePos];
+
+            panel.gameObject.SetActive(true);
+        }
     }
 }

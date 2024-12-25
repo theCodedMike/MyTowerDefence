@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Game
 {
@@ -7,16 +10,29 @@ namespace Game
         [Header("生成位置")]
         public Transform start;
 
+        public static SpawnSkeleton Instance;
+
+
+
         private GameObject[] skeletonPrefabs;
 
+        private HashSet<Transform> aliveSkeletons = new(32);
+
+
+        private void Awake()
+        {
+            Instance = this;
+        }
+
+
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             skeletonPrefabs = Resources.LoadAll<GameObject>("Prefabs/Skeletons");
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -28,7 +44,23 @@ namespace Game
         {
             int idx = Random.Range(0, skeletonPrefabs.Length);
 
-            Instantiate(skeletonPrefabs[idx], start.position, Quaternion.identity);
+            GameObject obj = Instantiate(skeletonPrefabs[idx], start.position, Quaternion.identity);
+            if (aliveSkeletons.Contains(obj.transform))
+            {
+                Debug.LogError($"生成了重复的Skeleton？？？{obj.transform}");
+                throw new DuplicateNameException("重复的Transform");
+            }
+
+            aliveSkeletons.Add(obj.transform);
+        }
+
+        // 当僵尸死亡时，移除它
+        public void RemoveSkeleton(Transform transform)
+        {
+            if (!aliveSkeletons.Remove(transform))
+            {
+                Debug.LogError($"移除Skeleton的Transform失败：{transform.gameObject}");
+            }
         }
     }
 }

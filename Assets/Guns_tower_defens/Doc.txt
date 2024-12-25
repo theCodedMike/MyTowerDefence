@@ -1,0 +1,21 @@
+Guns - Tower Defense (Low poly)
+
+ice_bullet - 1K 1024/1024 (albedo, AO, metallic, normal) 210 tris
+ice_cannon - 2K 2048/2048 (albedo, AO, metallic, normal) 2.962 tris
+electrik_gun - 2K 2048/2048 (albedo, AO, metallic, normal) 1.824 tris
+m10_gun - 2K 2048/2048 (albedo, AO, metallic, normal) 3.969 tris
+m10_bullet - 1K 1024/1024 (albedo, AO, metallic, normal) 668 tris
+magic_gun - 2K 2048/2048 (albedo, AO, metallic, normal) 4.318 tris
+magic_bullet - 1K 1024/1024 (albedo, AO, metallic, normal) 224 tris
+mechanical_gun 2K 2048/2048 (albedo, AO, metallic, normal) - 4.500 tris
+core_bullet - 1K 1024/1024 (albedo, AO, metallic, normal) 120 tris
+
+===========================================================================
+(Support) Author's CONTACTS:
+-3D Artist:
+
+ArtStation:
+https://www.artstation.com/zefgm
+
+e-mail:
+kilroy9916@yandex.ru
