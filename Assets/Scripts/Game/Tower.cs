@@ -22,9 +22,14 @@ namespace Game
         public float attackDistance;
         [Header("开火点")]
         public Transform firePoint;
+        [Header("如果是激光炮，则是层遮罩")]
+        public LayerMask mask;
+        [Header("发射曲线")]
+        public AnimationCurve curve;
+        [Header("激光射线振幅")]
+        public float amplitude;
 
         private TowerType type;
-
         private FsmSystem fsmSystem;
 
 
@@ -46,6 +51,8 @@ namespace Game
 
             IdleState idleState = new IdleState(fsmSystem, type, attackDistance);
             AttackState attackState = new AttackState(fsmSystem, type, attackDistance);
+            attackState.lineRenderer = firePoint.GetComponent<LineRenderer>();
+            attackState.mask = mask;
 
             // 从Idle状态转移到Attack状态
             idleState.AddTransition(Transition.SeeSkeleton, StateId.Attack);

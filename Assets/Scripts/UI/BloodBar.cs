@@ -8,9 +8,8 @@ namespace UI
     {
         [Header("血条")]
         public Slider bloodBar;
-        [Header("血条在头顶的位置")]
-        public Transform bloodBarPos;
-
+       
+        private Transform bloodBarPos;
         private Camera mainCamera;
         private Camera uiCamera;
 
@@ -20,7 +19,8 @@ namespace UI
             bloodBar.value = 1f;
             mainCamera = Camera.main;
             uiCamera = Camera.allCameras[1];
-            Skeleton.OnDamage = UpdateBloodBar;
+            transform.parent.GetComponent<Skeleton>().OnDamage = UpdateBloodBar;
+            bloodBarPos = transform.parent.Find("BloodBarPos");
         }
 
         private void UpdateBloodBar(float value)
@@ -31,6 +31,8 @@ namespace UI
         // Update is called once per frame
         void Update()
         {
+            //this.transform.rotation = mainCamera.transform.rotation;
+
             Vector3 pos = mainCamera.WorldToViewportPoint(bloodBarPos.position);
             Vector3 uiPos = uiCamera.ViewportToWorldPoint(pos);
             transform.position = uiPos;

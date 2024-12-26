@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,21 +9,21 @@ namespace Game.Fsm
 {
     public class AttackState : FsmState
     {
-        // 当塔与僵尸的距离大于该距离时，塔变为静止
-        private float attackDistance;
-        // 塔的类型
-        private TowerType type;
-
-        private readonly float moveSpeed = 500;
-
+        public LineRenderer lineRenderer; // 激光射线渲染器
+        public LayerMask mask; // 层遮罩
+        
+        
+        private Ray shootRay;
         private float timer;
+        private float fireSpeed = 1; // 生成子弹的速度(个/秒)
+        private float displayPercentage = 0.6f; // 激光持续百分比
 
-        public AttackState(FsmSystem fsm, TowerType type, float attackDistance) : base(fsm)
+
+        public AttackState(FsmSystem fsm, TowerType type, float attackDistance) : base(type, attackDistance, fsm)
         {
             stateId = StateId.Attack;
-            this.type = type;
-            this.attackDistance = attackDistance;
         }
+
 
         /// <summary>
         /// 攻击状态下执行的逻辑
@@ -32,36 +33,61 @@ namespace Game.Fsm
         {
             List<Transform> aliveSkeletons = SpawnSkeleton.Instance.GetAliveSkeletons();
             Vector3 towerPosition = towerObj.transform.position;
+            Vector3 firePosition = towerObj.GetComponent<Tower>().firePoint.position;
             float targetDistance = Mathf.Pow(attackDistance, 2);
 
             // ReSharper disable once ComplexConditionExpression
             Transform targetSkeleton =
                 aliveSkeletons.Find(skeleton => (skeleton.position - towerPosition).sqrMagnitude <= targetDistance);
             if (targetSkeleton is null)
+            {
+                Debug.Log("目前没有可攻击的僵尸...");
                 return;
+            }
 
             towerObj.transform.LookAt(targetSkeleton);
 
-            Vector3 dir = (targetSkeleton.position - towerPosition).normalized;
-
             timer += Time.deltaTime;
-            if (timer >= 0.5f)
+            if (timer >= (1 / fireSpeed))
             {
                 timer = 0;
 
                 if (type == TowerType.LaserTower)
                 {
+                    // 激光炮
+                    lineRenderer.enabled = true;
+                    shootRay.origin = firePosition;
+                    Vector3 bodyPointPosition = targetSkeleton.Find("BodyPoint").position;
+                    shootRay.direction = (bodyPointPosition - firePosition).normalized;
 
+                    lineRenderer.positionCount = 2;
+                    lineRenderer.SetPosition(0, firePosition);
+                    lineRenderer.SetPosition(1, bodyPointPosition);
+
+                    if (Physics.Raycast(shootRay, out var hit, Mathf.Infinity, mask))
+                    {
+                        //endPoint = hit.point;
+                        if (hit.transform.CompareTag("Skeleton"))
+                        {
+                            hit.transform.GetComponent<Skeleton>().Damage();
+                        }
+                    }
                 }
                 else
                 {
+                    // 非激光炮
+                    Vector3 dir = (targetSkeleton.position - towerPosition).normalized;
                     string prefabPath = type == TowerType.CannonTower ? "Prefabs/Bullets/CannonBullet" : "Prefabs/Bullets/KnifeBullet";
                     GameObject prefab = Resources.Load<GameObject>(prefabPath);
-                    Vector3 firePosition = towerObj.GetComponent<Tower>().firePoint.position;
-
-                    GameObject bulletObj = Object.Instantiate(prefab, firePosition, Quaternion.identity);
+                    
+                    GameObject bulletObj = Object.Instantiate(prefab, firePosition, Quaternion.Euler(towerObj.transform.localEulerAngles));
                     bulletObj.GetComponent<Bullet>().SetVelocity(dir);
                 }
+            }
+
+            if (timer >= (displayPercentage / fireSpeed))
+            {
+                lineRenderer.enabled = false;
             }
 
         }
@@ -69,19 +95,24 @@ namespace Game.Fsm
         /// <summary>
         /// 转移到下一状态(静止状态)的判断逻辑
         /// </summary>
-        /// <param name="obj"></param>
-        public override void NextStateAction(GameObject obj)
+        /// <param name="towerObj"></param>
+        public override void NextStateAction(GameObject towerObj)
         {
             List<Transform> skeletons = SpawnSkeleton.Instance.GetAliveSkeletons();
-            Vector3 towerPosition = obj.transform.position;
+            Vector3 towerPosition = towerObj.transform.position;
             float targetDistance = Mathf.Pow(attackDistance, 2);
-
 
             // ReSharper disable once ComplexConditionExpression
             if (skeletons.All(skeleton => (skeleton.position - towerPosition).sqrMagnitude > targetDistance))
             {
                 fsmSystem.DoTransition(Transition.LoseSkeleton);
             }
+        }
+
+        public override void DoAfterLeaveAction()
+        {
+            if (lineRenderer.enabled)
+                lineRenderer.enabled = false;
         }
     }
 }

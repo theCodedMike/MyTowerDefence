@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Game
@@ -8,22 +7,22 @@ namespace Game
         [Header("移动速度")]
         public float moveSpeed;
 
-        private Rigidbody rigidbody;
+        private Rigidbody rb;
 
 
         // Start is called before the first frame update
         void Start()
         {
-            rigidbody = GetComponent<Rigidbody>();
+            rb = GetComponent<Rigidbody>();
         }
 
 
         public void SetVelocity(Vector3 dir)
         {
-            if (rigidbody == null)
-                rigidbody = GetComponent<Rigidbody>();
+            if (rb == null)
+                rb = GetComponent<Rigidbody>();
 
-            rigidbody.velocity = dir * moveSpeed;
+            rb.velocity = dir * moveSpeed;
         }
 
         private void OnTriggerEnter(Collider other)

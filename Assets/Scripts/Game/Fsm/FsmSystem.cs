@@ -32,7 +32,6 @@ namespace Game.Fsm
             if (!idToStateMap.TryAdd(state.ID, state))
             {
                 Debug.LogError($"状态{state.ID}已存在于Map，无法添加...");
-                return;
             }
         }
 

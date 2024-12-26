@@ -5,16 +5,23 @@ namespace Game.Fsm
 {
     public abstract class FsmState
     {
+        // 当塔与僵尸的距离小于等于该距离时，塔开始攻击
+        protected float attackDistance;
+        // 塔的类型
+        protected TowerType type;
+        // 状态ID
         protected StateId stateId;
         public StateId ID => stateId;
 
         protected Dictionary<Transition, StateId> transitionToStateIdMap = new(8);
 
-        public FsmSystem fsmSystem;
+        protected FsmSystem fsmSystem;
 
-        protected FsmState(FsmSystem fsm)
+        protected FsmState(TowerType type, float attackDistance, FsmSystem fsm)
         {
-            fsmSystem = fsm;
+            this.type = type;
+            this.attackDistance = attackDistance;
+            this.fsmSystem = fsm;
         }
 
         public void AddTransition(Transition trans, StateId id)
@@ -73,13 +80,13 @@ namespace Game.Fsm
         /// <summary>
         /// 处于本状态时要执行的逻辑
         /// </summary>
-        /// <param name="obj"></param>
-        public abstract void CurrStateAction(GameObject obj);
+        /// <param name="towerObj"></param>
+        public abstract void CurrStateAction(GameObject towerObj);
 
         /// <summary>
         /// 转换到下一状态需要的条件
         /// </summary>
-        /// <param name="obj"></param>
-        public abstract void NextStateAction(GameObject obj);
+        /// <param name="towerObj"></param>
+        public abstract void NextStateAction(GameObject towerObj);
     }
 }

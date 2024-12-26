@@ -10,6 +10,7 @@ TagManager:
   - TowerBase
   - Ground
   - Bullet
+  - Skeleton
   layers:
   - Default
   - TransparentFX
