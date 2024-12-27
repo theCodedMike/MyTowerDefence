@@ -30,16 +30,18 @@ namespace UI
 
         static UIManager()
         {
-            towerPosToPanelPosMap = new(16);
-            towerPosToPanelPosMap.Add(new Vector3(-12.0f, -1.0f, -7.0f), new Vector3(390.98f, 616.91f, 0f));
-            towerPosToPanelPosMap.Add(new Vector3(-9.0f, -1.0f, -19.25f), new Vector3(127.67f, 419.03f, 0f));
-            towerPosToPanelPosMap.Add(new Vector3(3.0f, -1.0f, -15.75f), new Vector3(355.87f, 271.42f, 0f));
-            towerPosToPanelPosMap.Add(new Vector3(6.0f, -1.0f, -7.0f), new Vector3(605.62f, 359.99f, 0f));
-            towerPosToPanelPosMap.Add(new Vector3(-3.0f, -1.0f, 8.75f), new Vector3(699.77f, 608.14f, 0f));
-            towerPosToPanelPosMap.Add(new Vector3(-18.0f, -1.0f, 0f), new Vector3(429.28f, 673.57f, 0f));
-            towerPosToPanelPosMap.Add(new Vector3(-18.0f, -1.0f, 21.0f), new Vector3(672.64f, 678.35f, 0f));
-            towerPosToPanelPosMap.Add(new Vector3(-3.0f, -1.0f, 12.25f), new Vector3(989.42f, 678.35f, 0f));
-            towerPosToPanelPosMap.Add(new Vector3(18.0f, -1.0f, 7.0f), new Vector3(1353.27f, 359.99f, 0f));
+            towerPosToPanelPosMap = new(16)
+            {
+                { new Vector3(-12.0f, -1.0f, -7.0f), new Vector3(390.98f, 616.91f, 0f) },
+                { new Vector3(-9.0f, -1.0f, -19.25f), new Vector3(127.67f, 419.03f, 0f) },
+                { new Vector3(3.0f, -1.0f, -15.75f), new Vector3(355.87f, 271.42f, 0f) },
+                { new Vector3(6.0f, -1.0f, -7.0f), new Vector3(605.62f, 359.99f, 0f) },
+                { new Vector3(-3.0f, -1.0f, 8.75f), new Vector3(699.77f, 608.14f, 0f) },
+                { new Vector3(-18.0f, -1.0f, 0f), new Vector3(429.28f, 673.57f, 0f) },
+                { new Vector3(-18.0f, -1.0f, 21.0f), new Vector3(672.64f, 678.35f, 0f) },
+                { new Vector3(-3.0f, -1.0f, 12.25f), new Vector3(989.42f, 678.35f, 0f) },
+                { new Vector3(18.0f, -1.0f, 7.0f), new Vector3(1353.27f, 359.99f, 0f) }
+            };
         }
 
 
@@ -73,7 +75,6 @@ namespace UI
         public void CloseMorePanel()
         {
             morePanel.gameObject.SetActive(false);
-            print("更多面板关闭");
         }
 
         /// <summary>

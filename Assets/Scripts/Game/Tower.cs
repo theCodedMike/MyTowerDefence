@@ -1,5 +1,6 @@
 using Game.Fsm;
 using UnityEngine;
+using Utils;
 
 namespace Game
 {
@@ -24,12 +25,12 @@ namespace Game
         public Transform firePoint;
         [Header("如果是激光炮，则是层遮罩")]
         public LayerMask mask;
-        [Header("发射曲线")]
-        public AnimationCurve curve;
-        [Header("激光射线振幅")]
-        public float amplitude;
 
-        private TowerType type;
+        public TowerType type { get; private set; }
+        public Level level { get; private set; }
+        public int damage { get; private set; }
+        public int price { get; private set; }
+
         private FsmSystem fsmSystem;
 
 
@@ -63,9 +64,12 @@ namespace Game
             fsmSystem.AddState(attackState);
         }
 
-        public void SetTowerType(TowerType type)
+        public void SetTowerInfo(TowerInfo info)
         {
-            this.type = type;
+            this.type = info.type;
+            this.level = info.level;
+            this.damage = info.damage;
+            this.price = info.price;
         }
     }
 }

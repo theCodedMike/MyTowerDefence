@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using UI;
 using UnityEngine;
+using Utils;
 
 namespace Game
 {
@@ -60,37 +60,55 @@ namespace Game
         // 创建各种类型的塔
         private void GenTower(TowerType type)
         {
-            if (gold < 30)
+            DoCreateTower(type, Level.Normal);
+        }
+
+        private void DoCreateTower(TowerType type, Level level, Transform oldTower = null)
+        {
+            TowerInfo towerInfo = TowerContainer.Instance.GetTowerInfo(type, level);
+
+            if (gold < towerInfo.price)
             {
-                Debug.LogError($"目前金币为{gold}，不足以购买塔...");
+                Debug.LogWarning($"目前金币为{gold}，不足以购买塔...");
                 return;
             }
 
-            string prefabPath = type switch
+            if (level == Level.Upgraded && oldTower != null)
             {
-                TowerType.LaserTower => "Prefabs/Towers/LaserTower",
-                TowerType.CannonTower => "Prefabs/Towers/CannonTower",
-                TowerType.KnifeTower => "Prefabs/Towers/KnifeTower",
-                _ => throw new ArgumentException($"未知的塔类型：{type}"),
-            };
+                Destroy(oldTower.gameObject);
+            }
 
-            GameObject prefab = Resources.Load<GameObject>(prefabPath);
+            GameObject prefab = Resources.Load<GameObject>(towerInfo.prefabPath);
             Vector3 copyPos = currTowerBasePos;
             copyPos.y = 0;
             GameObject obj = Instantiate(prefab, copyPos, Quaternion.identity);
             Tower tower = obj.GetComponent<Tower>();
-            tower.SetTowerType(type);
+            tower.SetTowerInfo(towerInfo);
 
-            towerBaseMap.Add(currTowerBasePos, tower);
+            towerBaseMap[currTowerBasePos] = tower; // 覆盖添加
 
-            gold -= 30;
+            gold -= towerInfo.price;
             UIManager.Instance.UpdateGold(gold);
         }
 
         // 处理升级和出售
         private void HandleMoreService(MoreType type)
         {
-            print($"{type}");
+            Tower tower = towerBaseMap[currTowerBasePos];
+            int towerPrice = tower.price;
+
+            if (type == MoreType.Upgrade) // 升级
+            {
+                DoCreateTower(tower.type, Level.Upgraded, tower.transform);
+            }
+            else if (type == MoreType.Sell) //出售
+            {
+                towerBaseMap.Remove(currTowerBasePos);
+                Destroy(tower.transform.gameObject);
+
+                gold += towerPrice;
+                UIManager.Instance.UpdateGold(gold);
+            }
         }
 
 

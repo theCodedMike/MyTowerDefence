@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d37d3ad3f1ec0040a523b612e117dcd, type: 3}
+  m_Name: TowerContainer
+  m_EditorClassIdentifier: 
+  towerAssets:
+  - type: 0
+    level: 0
+    prefabPath: Prefabs/Towers/LaserTower
+    price: 30
+    damage: 30
+  - type: 1
+    level: 0
+    prefabPath: Prefabs/Towers/KnifeTower
+    price: 30
+    damage: 30
+  - type: 2
+    level: 0
+    prefabPath: Prefabs/Towers/CannonTower
+    price: 30
+    damage: 30
+  - type: 0
+    level: 1
+    prefabPath: Prefabs/Upgrade/LaserTower
+    price: 50
+    damage: 50
+  - type: 1
+    level: 1
+    prefabPath: Prefabs/Upgrade/KnifeTower
+    price: 50
+    damage: 50
+  - type: 2
+    level: 1
+    prefabPath: Prefabs/Upgrade/CannonTower
+    price: 50
+    damage: 50
