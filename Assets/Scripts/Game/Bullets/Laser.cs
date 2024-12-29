@@ -22,7 +22,10 @@ namespace Game.Bullets
 
 
         public Vector3 Direction { private get; set; }// 激光朝向
-        public int Damage { private get; set; }// 激光的伤害值
+        public int Damage
+        {
+            private get; set;
+        }// 激光的伤害值
 
         void Start()
         {

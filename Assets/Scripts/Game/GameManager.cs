@@ -16,25 +16,36 @@ namespace Game
 
         private Vector3 currTowerBasePos;
 
+        public static bool gameOver;
 
         private int gold; // 金币
-
         private int score; // 得分
+        private int life; // 生命值
+        private AudioSource audioSource;
 
         // Start is called before the first frame update
         private void Start()
         {
             gold = 100;
             score = 0;
+            life = 10;
             mainCamera = Camera.main;
             UIManager.OnSelectTower = GenTower;
             UIManager.OnSelectMore = HandleMoreService;
             Skeleton.OnDeath = HandleSkeletonDeath;
+            Skeleton.OnArriveEnd = HandleArriveEnd;
+            audioSource = GetComponent<AudioSource>();
         }
 
         // Update is called once per frame
         private void Update()
         {
+            if (gameOver)
+            {
+                Debug.Log("游戏结束...");
+                return;
+            }
+
             if (Input.GetMouseButtonDown(0))
             {
                 Vector3 mousePosition = Input.mousePosition;
@@ -44,6 +55,8 @@ namespace Game
                     Transform basePos = hit.transform;
                     if (basePos.CompareTag("TowerBase"))
                     {
+                        audioSource.Play();
+
                         currTowerBasePos = basePos.position;
 
                         if (towerBaseMap.ContainsKey(currTowerBasePos))
@@ -69,7 +82,6 @@ namespace Game
         private void DoCreateTower(TowerType type, Level level, Transform oldTower = null)
         {
             TowerInfo towerInfo = TowerContainer.Instance.GetTowerInfo(type, level);
-            print("TowerInfo: " + towerInfo);
 
             if (gold < towerInfo.price)
             {
@@ -125,6 +137,21 @@ namespace Game
 
             UIManager.Instance.UpdateGold(this.gold);
             UIManager.Instance.UpdateScore(this.score);
+        }
+
+        // 处理僵尸到达终点事件
+        private void HandleArriveEnd()
+        {
+            if (life == 0)
+                return;
+
+            life--;
+            if (life <= 0)
+            {
+                life = 0;
+                gameOver = true;
+            }
+            UIManager.Instance.UpdateLife(life);
         }
     }
 }

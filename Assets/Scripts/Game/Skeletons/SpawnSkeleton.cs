@@ -34,6 +34,9 @@ namespace Game.Skeletons
         // Update is called once per frame
         private void Update()
         {
+            if (GameManager.gameOver)
+                return;
+
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 Spawn();

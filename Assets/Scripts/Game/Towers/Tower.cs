@@ -4,25 +4,16 @@ using Utils;
 
 namespace Game.Towers
 {
-    public enum TowerType
-    {
-        LaserTower,
-        KnifeTower,
-        CannonTower,
-    }
-
-    public enum MoreType
-    {
-        Upgrade,
-        Sell,
-    }
-
     public class Tower : MonoBehaviour
     {
         [Header("攻击距离")]
         public float attackDistance;
         [Header("开火点")]
         public Transform firePoint;
+        [Header("激光发射音效")]
+        public AudioClip laserClip;
+        [Header("炮弹发射音效")]
+        public AudioClip nonLaserClip;
 
         public TowerType type { get; private set; }
         public Level level { get; private set; }
@@ -30,11 +21,13 @@ namespace Game.Towers
         public int price { get; private set; }
 
         private FsmSystem fsmSystem;
-
+        private AudioSource audioSource;
 
         // Start is called before the first frame update
         void Start()
         {
+            audioSource = GetComponent<AudioSource>();
+
             InitFsm();
         }
 
@@ -50,13 +43,16 @@ namespace Game.Towers
 
             IdleState idleState = new IdleState(fsmSystem, type, attackDistance);
             AttackState attackState = new AttackState(fsmSystem, type, level, attackDistance);
+            attackState.audioSource = audioSource;
+            attackState.laserClip = laserClip;
+            attackState.nonLaserClip = nonLaserClip;
 
             // 从Idle状态转移到Attack状态
-            idleState.AddTransition(Transition.SeeSkeleton, StateId.Attack);
+            idleState.AddTransition(Transition.TowerSeeSkeleton, StateId.TowerAttack);
             // 从Attack状态转移到Idle状态
-            attackState.AddTransition(Transition.LoseSkeleton, StateId.Idle);
+            attackState.AddTransition(Transition.TowerLoseSkeleton, StateId.TowerIdle);
 
-            fsmSystem.AddState(idleState); // 初始状态
+            fsmSystem.AddState(idleState); // 初始为Idle状态
             fsmSystem.AddState(attackState);
         }
 
@@ -68,4 +64,20 @@ namespace Game.Towers
             this.price = info.price;
         }
     }
+
+
+
+    public enum TowerType
+    {
+        LaserTower,
+        KnifeTower,
+        CannonTower,
+    }
+
+    public enum MoreType
+    {
+        Upgrade,
+        Sell,
+    }
+
 }

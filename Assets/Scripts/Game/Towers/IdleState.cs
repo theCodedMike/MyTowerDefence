@@ -10,7 +10,7 @@ namespace Game.Towers
     {
         public IdleState(FsmSystem fsm, TowerType type, float attackDistance) : base(attackDistance, fsm)
         {
-            stateId = StateId.Idle;
+            stateId = StateId.TowerIdle;
         }
 
         /// <summary>
@@ -35,9 +35,9 @@ namespace Game.Towers
             Vector3 towerPosition = towerObj.transform.position;
 
             // ReSharper disable once ComplexConditionExpression
-            if (skeletons.Any(skeleton => (skeleton.position - towerPosition).sqrMagnitude <= targetDistance))
+            if (skeletons.Any(skeleton => (skeleton.position - towerPosition).sqrMagnitude <= attackDistanceSqr))
             {
-                fsmSystem.DoTransition(Transition.SeeSkeleton);
+                fsmSystem.DoTransition(Transition.TowerSeeSkeleton);
             }
         }
     }

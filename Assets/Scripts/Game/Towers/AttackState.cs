@@ -6,6 +6,8 @@ using Game.Skeletons;
 using UnityEngine;
 using Utils;
 
+using MyBullet = Game.Bullets.Bullet;
+
 namespace Game.Towers
 {
     public class AttackState : FsmState
@@ -17,9 +19,13 @@ namespace Game.Towers
         private Level level; // 等级
         private GameObject bulletObj; // 子弹实例
 
+        public AudioSource audioSource;
+        public AudioClip laserClip;
+        public AudioClip nonLaserClip;
+
         public AttackState(FsmSystem fsm, TowerType type, Level level, float attackDistance) : base(attackDistance, fsm)
         {
-            stateId = StateId.Attack;
+            stateId = StateId.TowerAttack;
             this.type = type;
             this.level = level;
         }
@@ -40,15 +46,16 @@ namespace Game.Towers
             Vector3 towerPosition = towerObj.transform.position;
             // ReSharper disable once ComplexConditionExpression
             Transform targetSkeleton =
-                aliveSkeletons.Find(skeleton => (skeleton.position - towerPosition).sqrMagnitude <= targetDistance);
+                aliveSkeletons.Find(skeleton => (skeleton.position - towerPosition).sqrMagnitude <= attackDistanceSqr);
             if (targetSkeleton is null)
             {
-                Debug.Log($"攻击状态下，塔周围{(Mathf.Sqrt(targetDistance))}米内没有可攻击的僵尸...");
+                Debug.Log($"攻击状态下，塔周围{(Mathf.Sqrt(attackDistanceSqr))}米内没有可攻击的僵尸...");
                 return;
             }
 
             Transform bodyPoint = targetSkeleton.Find("BodyPoint");
             towerObj.transform.LookAt(bodyPoint);
+
 
             timer += Time.deltaTime;
             if (timer >= (1 / fireSpeed))
@@ -62,6 +69,8 @@ namespace Game.Towers
 
                 if (type == TowerType.LaserTower)
                 {
+                    audioSource.PlayOneShot(laserClip);
+
                     // 激光炮
                     Vector3 skeletonPosition = targetSkeleton.position;
                     skeletonPosition.y = 1f;
@@ -77,6 +86,8 @@ namespace Game.Towers
                 }
                 else
                 {
+                    audioSource.PlayOneShot(nonLaserClip);
+
                     // 非激光炮
                     Vector3 bodyPointPosition = bodyPoint.position;
                     bodyPointPosition.y = firePosition.y;
@@ -87,12 +98,12 @@ namespace Game.Towers
                     {
                         Vector3 firePosition2 = towerObj.transform.Find("FirePoint2").position;
                         GameObject bulletObj2 = Object.Instantiate(bulletPrefab, firePosition2, Quaternion.Euler(towerObj.transform.localEulerAngles));
-                        Bullet bullet2 = bulletObj2.GetComponent<Bullet>();
+                        MyBullet bullet2 = bulletObj2.GetComponent<MyBullet>();
                         bullet2.SetVelocity(direction);
                         bullet2.Damage = towerInfo.damage;
                     }
 
-                    Bullet bullet = bulletObj.GetComponent<Bullet>();
+                    MyBullet bullet = bulletObj.GetComponent<MyBullet>();
                     bullet.SetVelocity(direction);
                     bullet.Damage = towerInfo.damage;
                 }
@@ -116,9 +127,9 @@ namespace Game.Towers
             Vector3 towerPosition = towerObj.transform.position;
 
             // ReSharper disable once ComplexConditionExpression
-            if (skeletons.All(skeleton => (skeleton.position - towerPosition).sqrMagnitude > targetDistance))
+            if (skeletons.All(skeleton => (skeleton.position - towerPosition).sqrMagnitude > attackDistanceSqr))
             {
-                fsmSystem.DoTransition(Transition.LoseSkeleton);
+                fsmSystem.DoTransition(Transition.TowerLoseSkeleton);
             }
         }
 

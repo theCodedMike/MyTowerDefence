@@ -6,6 +6,8 @@ namespace Game.Bullets
     {
         [Header("移动速度")]
         public float moveSpeed;
+        [Header("击中物体的特效")]
+        public GameObject HitSplash;
 
         private Rigidbody rb;
         public int Damage { get; set; }

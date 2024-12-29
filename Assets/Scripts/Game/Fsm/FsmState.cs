@@ -7,7 +7,7 @@ namespace Game.Fsm
     public abstract class FsmState
     {
         // 攻击距离的平方
-        protected float targetDistance;
+        protected float attackDistanceSqr;
         // 状态ID
         protected StateId stateId;
         public StateId ID => stateId;
@@ -18,7 +18,7 @@ namespace Game.Fsm
 
         protected FsmState(float attackDistance, FsmSystem fsm)
         {
-            this.targetDistance = Mathf.Pow(attackDistance, 2);
+            this.attackDistanceSqr = Mathf.Pow(attackDistance, 2);
             this.fsmSystem = fsm;
         }
 
@@ -78,13 +78,13 @@ namespace Game.Fsm
         /// <summary>
         /// 处于本状态时要执行的逻辑
         /// </summary>
-        /// <param name="towerObj"></param>
-        public abstract void CurrStateAction(GameObject towerObj);
+        /// <param name="gameObject"></param>
+        public abstract void CurrStateAction(GameObject gameObject);
 
         /// <summary>
         /// 转换到下一状态需要的条件
         /// </summary>
-        /// <param name="towerObj"></param>
-        public abstract void NextStateAction(GameObject towerObj);
+        /// <param name="gameObject"></param>
+        public abstract void NextStateAction(GameObject gameObject);
     }
 }

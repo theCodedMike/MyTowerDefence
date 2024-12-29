@@ -31,16 +31,11 @@ namespace UI
         // Update is called once per frame
         void Update()
         {
-            //this.transform.rotation = mainCamera.transform.rotation;
-
             Vector3 pos = mainCamera.WorldToViewportPoint(bloodBarPos.position);
             Vector3 uiPos = uiCamera.ViewportToWorldPoint(pos);
             transform.position = uiPos;
 
             transform.rotation = Quaternion.LookRotation(mainCamera.transform.forward);
-
-            //Vector3 lookPoint = Vector3.ProjectOnPlane(transform.position - mainCamera.transform.position, mainCamera.transform.forward);
-            //transform.LookAt(mainCamera.transform.position + lookPoint);
         }
     }
 }

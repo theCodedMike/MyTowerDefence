@@ -13,6 +13,8 @@ namespace UI
         public TMP_Text gold;
         [Header("分数")]
         public TMP_Text score;
+        [Header("生命值")]
+        public TMP_Text life;
         [Header("更多面板")]
         public Transform morePanel;
         [Header("选择炮塔面板")]
@@ -28,8 +30,11 @@ namespace UI
 
         private static Dictionary<Vector3, Vector3> towerPosToPanelPosMap;
 
+        private AudioSource audioSource;
+
         static UIManager()
         {
+            // ReSharper disable once ComplexConditionExpression
             towerPosToPanelPosMap = new(16)
             {
                 { new Vector3(-12.0f, -1.0f, -7.0f), new Vector3(390.98f, 616.91f, 0f) },
@@ -55,6 +60,8 @@ namespace UI
         {
             gold.text = "100";
             score.text = "0";
+            life.text = "10/10";
+            audioSource = GetComponent<AudioSource>();
         }
 
 
@@ -68,12 +75,18 @@ namespace UI
             this.score.text = $"{score}";
         }
 
+        public void UpdateLife(int life)
+        {
+            this.life.text = $"{life}/10";
+        }
 
         /// <summary>
         /// 关闭更多面板
         /// </summary>
         public void CloseMorePanel()
         {
+            PlayPressBtn();
+
             morePanel.gameObject.SetActive(false);
         }
 
@@ -119,6 +132,8 @@ namespace UI
         /// </summary>
         public void CloseSelectTowerPanel()
         {
+            PlayPressBtn();
+
             selectPanel.gameObject.SetActive(false);
         }
 
@@ -147,6 +162,12 @@ namespace UI
             rect.position = towerPosToPanelPosMap[towerBasePos];
 
             panel.gameObject.SetActive(true);
+        }
+
+        // 播放按钮音效
+        private void PlayPressBtn()
+        {
+            audioSource.Play();
         }
     }
 }
