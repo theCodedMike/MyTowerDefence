@@ -1,4 +1,4 @@
-using Game;
+using Game.Skeletons;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +8,7 @@ namespace UI
     {
         [Header("血条")]
         public Slider bloodBar;
-       
+
         private Transform bloodBarPos;
         private Camera mainCamera;
         private Camera uiCamera;

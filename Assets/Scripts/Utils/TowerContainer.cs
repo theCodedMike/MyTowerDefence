@@ -1,6 +1,6 @@
 using System;
-using Game;
 using System.Collections.Generic;
+using Game.Towers;
 using UnityEngine;
 
 namespace Utils
@@ -18,13 +18,13 @@ namespace Utils
             get { return instance ??= Resources.Load<TowerContainer>("TowerContainer"); }
         }
 
-        // 获取塔的预制体的路径
-        public string GetPrefabPath(TowerType type, Level level)
+        // 获取子弹预制体的路径
+        public string GetBulletPath(TowerType type, Level level)
         {
             foreach (TowerInfo towerInfo in towerAssets)
             {
                 if (towerInfo.type == type && towerInfo.level == level)
-                    return towerInfo.prefabPath;
+                    return towerInfo.bulletPath;
             }
 
             throw new ArgumentException($"未知的塔类型和等级：{type} - {level}");

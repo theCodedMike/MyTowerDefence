@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Game.Skeletons;
+using Game.Towers;
 using UI;
 using UnityEngine;
 using Utils;
@@ -63,9 +65,11 @@ namespace Game
             DoCreateTower(type, Level.Normal);
         }
 
+        // 创建塔
         private void DoCreateTower(TowerType type, Level level, Transform oldTower = null)
         {
             TowerInfo towerInfo = TowerContainer.Instance.GetTowerInfo(type, level);
+            print("TowerInfo: " + towerInfo);
 
             if (gold < towerInfo.price)
             {
@@ -73,6 +77,7 @@ namespace Game
                 return;
             }
 
+            // ReSharper disable once ComplexConditionExpression
             if (level == Level.Upgraded && oldTower != null)
             {
                 Destroy(oldTower.gameObject);

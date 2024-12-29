@@ -1,14 +1,13 @@
 using System.Collections.Generic;
+using Game.Towers;
 using UnityEngine;
 
 namespace Game.Fsm
 {
     public abstract class FsmState
     {
-        // 当塔与僵尸的距离小于等于该距离时，塔开始攻击
-        protected float attackDistance;
-        // 塔的类型
-        protected TowerType type;
+        // 攻击距离的平方
+        protected float targetDistance;
         // 状态ID
         protected StateId stateId;
         public StateId ID => stateId;
@@ -17,10 +16,9 @@ namespace Game.Fsm
 
         protected FsmSystem fsmSystem;
 
-        protected FsmState(TowerType type, float attackDistance, FsmSystem fsm)
+        protected FsmState(float attackDistance, FsmSystem fsm)
         {
-            this.type = type;
-            this.attackDistance = attackDistance;
+            this.targetDistance = Mathf.Pow(attackDistance, 2);
             this.fsmSystem = fsm;
         }
 

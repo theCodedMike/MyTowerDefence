@@ -15,31 +15,37 @@ MonoBehaviour:
   towerAssets:
   - type: 0
     level: 0
-    prefabPath: Prefabs/Towers/LaserTower
+    prefabPath: Prefabs/Towers/LaserTower_0
     price: 30
+    bulletPath: Prefabs/Bullets/Laser_0
     damage: 30
   - type: 1
     level: 0
-    prefabPath: Prefabs/Towers/KnifeTower
+    prefabPath: Prefabs/Towers/KnifeTower_0
     price: 30
+    bulletPath: Prefabs/Bullets/KnifeBullet_0
     damage: 30
   - type: 2
     level: 0
-    prefabPath: Prefabs/Towers/CannonTower
+    prefabPath: Prefabs/Towers/CannonTower_0
     price: 30
+    bulletPath: Prefabs/Bullets/CannonBullet_0
     damage: 30
   - type: 0
     level: 1
-    prefabPath: Prefabs/Upgrade/LaserTower
+    prefabPath: Prefabs/Towers/LaserTower_1
     price: 50
+    bulletPath: Prefabs/Bullets/Laser_1
     damage: 50
   - type: 1
     level: 1
-    prefabPath: Prefabs/Upgrade/KnifeTower
+    prefabPath: Prefabs/Towers/KnifeTower_1
     price: 50
+    bulletPath: Prefabs/Bullets/KnifeBullet_1
     damage: 50
   - type: 2
     level: 1
-    prefabPath: Prefabs/Upgrade/CannonTower
+    prefabPath: Prefabs/Towers/CannonTower_1
     price: 50
+    bulletPath: Prefabs/Bullets/CannonBullet_1
     damage: 50

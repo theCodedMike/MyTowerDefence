@@ -1,5 +1,6 @@
 using System;
 using Game;
+using Game.Towers;
 
 namespace Utils
 {
@@ -14,7 +15,15 @@ namespace Utils
 
         public int price; // 价钱
 
-        public int damage; // 炮弹伤害值
+        public string bulletPath; // 子弹预制体的路径
+
+        public int damage; // 子弹伤害值
+
+
+        public override string ToString()
+        {
+            return $"type: {type}, level: {level}, prefabPath: {prefabPath}, price: {price}, bulletPath: {bulletPath}, damage: {damage}";
+        }
     }
 
     public enum Level

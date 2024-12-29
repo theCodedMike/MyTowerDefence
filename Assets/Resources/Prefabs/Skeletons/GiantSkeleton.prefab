@@ -345,7 +345,7 @@ Transform:
   m_GameObject: {fileID: 1666021412907673326}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2197,7 +2197,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bloodBar: {fileID: 336267442952572975}
-  bloodBarPos: {fileID: 8574040752658123885}
 --- !u!1 &9158977671198170793
 GameObject:
   m_ObjectHideFlags: 0
