@@ -31,7 +31,7 @@ namespace Utils
         /// <param name="position">位置</param>
         /// <param name="rotation">旋转</param>
         /// <returns></returns>
-        public GameObject Get(string key, GameObject prefab, Vector3 position, Quaternion rotation)
+        public GameObject Get(string key, GameObject prefab, Transform genPoint, Quaternion rotation)
         {
             GameObject gameObject;
 
@@ -39,15 +39,16 @@ namespace Utils
             {
                 gameObject = objMap[key].Dequeue();
                 gameObject.SetActive(true);
-            }
-            else
-            {
-                gameObject = Object.Instantiate(prefab);
+                gameObject.transform.position = genPoint.position;
+                gameObject.transform.rotation = rotation;
+                gameObject.transform.parent = null;
+
+                Debug.Log("position: " + genPoint.position);
+                Debug.Log("gb position: " + gameObject.transform.position);
+                return gameObject;
             }
 
-            gameObject.transform.position = position;
-            gameObject.transform.rotation = rotation;
-
+            gameObject = Object.Instantiate(prefab, genPoint.position, rotation);
             return gameObject;
         }
 
@@ -60,7 +61,7 @@ namespace Utils
         {
             if (!objMap.ContainsKey(key))
             {
-                objMap.Add(key, new Queue<GameObject>(10));
+                objMap.Add(key, new Queue<GameObject>(8));
             }
 
             obj.SetActive(false);

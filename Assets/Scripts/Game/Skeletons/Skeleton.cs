@@ -2,6 +2,7 @@ using System;
 using MyBullet = Game.Bullets.Bullet;
 using UnityEngine;
 using UnityEngine.AI;
+using Utils;
 
 namespace Game.Skeletons
 {
@@ -16,6 +17,8 @@ namespace Game.Skeletons
 
         private static readonly int Dead = Animator.StringToHash("Dead");
 
+
+        private string prefabName; // 预制体的名字
         private int remainingHp; // 剩余的血量
         private Transform end;
         private bool arriveEnd; // 到达终点
@@ -25,9 +28,9 @@ namespace Game.Skeletons
         private AudioSource audioSource;
 
 
-        // Start is called before the first frame update
-        void Start()
+        private void OnEnable()
         {
+            print("this is OnEnable....");
             agent = GetComponent<NavMeshAgent>();
             end = GameObject.FindWithTag("EndPoint").transform;
             animator = GetComponent<Animator>();
@@ -58,6 +61,15 @@ namespace Game.Skeletons
             }
         }
 
+        public void SetPrefabName(string prefabName)
+        {
+            if (string.IsNullOrEmpty(prefabName))
+            {
+                throw new ArgumentNullException("参数prefabName为空");
+            }
+
+            this.prefabName = prefabName;
+        }
 
         /// <summary>
         /// 受伤
@@ -89,12 +101,13 @@ namespace Game.Skeletons
             transform.Find("Canvas").gameObject.SetActive(false);
             //transform.GetComponent<CapsuleCollider>().isTrigger = true;
             rb.useGravity = true;
-            Invoke(nameof(Destroy), 1f);
+            Invoke(nameof(DestroySkeleton), 1f);
         }
 
-        private void Destroy()
+        private void DestroySkeleton()
         {
-            Destroy(this.gameObject);
+            //Destroy(this.gameObject);
+            GameObjectPool.Instance.Put(prefabName, this.gameObject);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -103,6 +116,12 @@ namespace Game.Skeletons
             {
                 Damage(other.GetComponent<MyBullet>().Damage);
             }
+        }
+
+        private void OnDisable()
+        {
+            rb.useGravity = false;
+            agent.enabled = true;
         }
     }
 }

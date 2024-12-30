@@ -1,21 +1,17 @@
 using System.Collections.Generic;
 using System.Data;
 using UnityEngine;
+using Utils;
 using Random = UnityEngine.Random;
 
 namespace Game.Skeletons
 {
     public class SpawnSkeleton : MonoBehaviour
     {
-        [Header("生成位置")]
-        public Transform start;
-
         public static SpawnSkeleton Instance;
 
-
-
+        private Transform startPoint;
         private GameObject[] skeletonPrefabs;
-
         private List<Transform> aliveSkeletons = new(32);
 
 
@@ -28,6 +24,8 @@ namespace Game.Skeletons
         // Start is called before the first frame update
         private void Start()
         {
+            //startPoint = GameObject.FindWithTag("StartPoint").transform;
+            startPoint = Env.Instance.GetChildTransform("Points").Find("Start");
             skeletonPrefabs = Resources.LoadAll<GameObject>("Prefabs/Skeletons");
         }
 
@@ -45,9 +43,13 @@ namespace Game.Skeletons
 
         private void Spawn()
         {
-            int idx = Random.Range(0, skeletonPrefabs.Length);
+            //int idx = Random.Range(0, skeletonPrefabs.Length);
+            int idx = 0;
+            GameObject obj = GameObjectPool.Instance.Get(
+                skeletonPrefabs[idx].name, skeletonPrefabs[idx], startPoint, Quaternion.identity);
+            obj.GetComponent<Skeleton>().SetPrefabName(skeletonPrefabs[idx].name);
 
-            GameObject obj = Instantiate(skeletonPrefabs[idx], start.position, Quaternion.identity);
+            //GameObject obj = Instantiate(skeletonPrefabs[idx], start.position, Quaternion.identity);
             if (aliveSkeletons.Contains(obj.transform))
             {
                 Debug.LogError($"生成了重复的Skeleton？？？{obj.transform}");
@@ -58,11 +60,11 @@ namespace Game.Skeletons
         }
 
         // 当僵尸死亡时，移除它
-        public void RemoveSkeleton(Transform transform)
+        public void RemoveSkeleton(Transform trans)
         {
-            if (!aliveSkeletons.Remove(transform))
+            if (!aliveSkeletons.Remove(trans))
             {
-                Debug.LogError($"移除Skeleton的Transform失败：{transform.gameObject}");
+                Debug.LogError($"移除Skeleton的Transform失败：{trans.gameObject}");
             }
         }
 
