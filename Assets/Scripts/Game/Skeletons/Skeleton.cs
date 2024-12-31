@@ -121,7 +121,7 @@ namespace Game.Skeletons
         private void OnDisable()
         {
             rb.useGravity = false;
-            agent.enabled = true;
+            transform.Find("Canvas").gameObject.SetActive(true);
         }
     }
 }

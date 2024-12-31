@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Utils
 {
@@ -39,10 +40,10 @@ namespace Utils
             {
                 gameObject = objMap[key].Dequeue();
                 gameObject.SetActive(true);
+                gameObject.GetComponent<NavMeshAgent>().enabled = false;
                 gameObject.transform.position = genPoint.position;
                 gameObject.transform.rotation = rotation;
-                gameObject.transform.parent = null;
-
+                gameObject.GetComponent<NavMeshAgent>().enabled = true;
                 Debug.Log("position: " + genPoint.position);
                 Debug.Log("gb position: " + gameObject.transform.position);
                 return gameObject;

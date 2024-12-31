@@ -24,8 +24,7 @@ namespace Game.Skeletons
         // Start is called before the first frame update
         private void Start()
         {
-            //startPoint = GameObject.FindWithTag("StartPoint").transform;
-            startPoint = Env.Instance.GetChildTransform("Points").Find("Start");
+            startPoint = GameObject.FindWithTag("StartPoint").transform;
             skeletonPrefabs = Resources.LoadAll<GameObject>("Prefabs/Skeletons");
         }
 
