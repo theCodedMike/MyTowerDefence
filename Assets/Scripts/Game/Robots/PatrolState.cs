@@ -29,7 +29,7 @@ namespace Game.Robots
         public override void CurrStateAction(GameObject robotObj)
         {
             robotObj.transform.LookAt(robotPath[idx]);
-            robotObj.transform.Translate(Vector3.forward * Time.deltaTime * moveSpeed);
+            robotObj.transform.Translate(Vector3.forward * (Time.deltaTime * moveSpeed));
 
             if (idx == 0)
                 reverse = false;

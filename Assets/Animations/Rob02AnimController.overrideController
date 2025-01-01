@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Rob02AnimController
+  m_Controller: {fileID: 9100000, guid: fb4b2d25acabf0a4fa7a2151f9463a6f, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 3422515911698638793, guid: cf34fc147b4584d4faba7f1761cab814, type: 3}
+    m_OverrideClip: {fileID: -2540133312509127908, guid: 32c4521ad4f33b945bebbf548998a96d, type: 3}
+  - m_OriginalClip: {fileID: 4406216103536153792, guid: cf34fc147b4584d4faba7f1761cab814, type: 3}
+    m_OverrideClip: {fileID: -4799524434163024911, guid: 32c4521ad4f33b945bebbf548998a96d, type: 3}

@@ -70,14 +70,14 @@ namespace Game.Robots
 
             GameObject bulletObj = GameObjectPool.Instance.Get(bulletPrefab.name, bulletPrefab,
                 bulletSpawnPoint[i].position, bulletSpawnPoint[i].rotation);
-            //GameObject bulletObj = Object.Instantiate(bulletPrefab, bulletSpawnPoint[i].position, bulletSpawnPoint[i].rotation);
             MyBullet bullet = bulletObj.GetComponent<MyBullet>();
+            
             bullet.PrefabName = bulletPrefab.name;
             bullet.SetVelocity(bulletSpawnPoint[i].forward);
             bullet.Damage = 30;
 
             i++;
-            if (i >= 1) i = 0;
+            i %= bulletSpawnPoint.Length;
         }
 
         public override void NextStateAction(GameObject robotObj)
