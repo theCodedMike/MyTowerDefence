@@ -22,7 +22,8 @@ namespace Game.Towers
 
         private FsmSystem fsmSystem;
         private AudioSource audioSource;
-
+        private string prefabName;
+        
         // Start is called before the first frame update
         void Start()
         {
@@ -41,8 +42,8 @@ namespace Game.Towers
         {
             fsmSystem = new FsmSystem();
 
-            IdleState idleState = new IdleState(fsmSystem, type, attackDistance);
-            AttackState attackState = new AttackState(fsmSystem, type, level, attackDistance);
+            IdleState idleState = new(fsmSystem, type, attackDistance);
+            AttackState attackState = new(fsmSystem, type, level, attackDistance);
             attackState.audioSource = audioSource;
             attackState.laserClip = laserClip;
             attackState.nonLaserClip = nonLaserClip;
@@ -63,6 +64,9 @@ namespace Game.Towers
             this.damage = info.damage;
             this.price = info.price;
         }
+        
+        public void SetPrefabName(string nameOfPrefab) => prefabName = nameOfPrefab;
+        public string GetPrefabName() => prefabName;
     }
 
 

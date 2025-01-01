@@ -3,6 +3,7 @@ using System.Linq;
 using Game.Fsm;
 using Game.Skeletons;
 using UnityEngine;
+using Utils;
 using MyBullet = Game.Bullets.Bullet;
 
 namespace Game.Robots
@@ -62,14 +63,16 @@ namespace Game.Robots
                 Fire();
             }
         }
-
-
+        
         void Fire()
         {
             audioSource.Play();
 
-            GameObject bulletObj = Object.Instantiate(bulletPrefab, bulletSpawnPoint[i].position, bulletSpawnPoint[i].rotation);
+            GameObject bulletObj = GameObjectPool.Instance.Get(bulletPrefab.name, bulletPrefab,
+                bulletSpawnPoint[i].position, bulletSpawnPoint[i].rotation);
+            //GameObject bulletObj = Object.Instantiate(bulletPrefab, bulletSpawnPoint[i].position, bulletSpawnPoint[i].rotation);
             MyBullet bullet = bulletObj.GetComponent<MyBullet>();
+            bullet.PrefabName = bulletPrefab.name;
             bullet.SetVelocity(bulletSpawnPoint[i].forward);
             bullet.Damage = 30;
 

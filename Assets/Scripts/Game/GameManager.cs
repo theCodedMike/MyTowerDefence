@@ -10,14 +10,11 @@ namespace Game
     // ReSharper disable once HollowTypeName
     public class GameManager : MonoBehaviour
     {
-        private Camera mainCamera;
-
-        private Dictionary<Vector3, Tower> towerBaseMap = new(16);
-
-        private Vector3 currTowerBasePos;
-
         public static bool gameOver;
 
+        private Camera mainCamera;
+        private readonly Dictionary<Vector3, Tower> towerBaseMap = new(16);
+        private Vector3 currTowerBasePos; // 当前鼠标点击的塔基位置
         private int gold; // 金币
         private int score; // 得分
         private int life; // 生命值
@@ -56,17 +53,12 @@ namespace Game
                     if (basePos.CompareTag("TowerBase"))
                     {
                         audioSource.Play();
-
                         currTowerBasePos = basePos.position;
 
                         if (towerBaseMap.ContainsKey(currTowerBasePos))
-                        {
                             UIManager.Instance.DisplayMorePanel(currTowerBasePos);
-                        }
                         else
-                        {
                             UIManager.Instance.DisplaySelectTowerPanel(currTowerBasePos);
-                        }
                     }
                 }
             }
@@ -79,29 +71,29 @@ namespace Game
         }
 
         // 创建塔
-        private void DoCreateTower(TowerType type, Level level, Transform oldTower = null)
+        private void DoCreateTower(TowerType type, Level level, Transform oldTower = null, string oldTowerPrefabName = null)
         {
             TowerInfo towerInfo = TowerContainer.Instance.GetTowerInfo(type, level);
 
             if (gold < towerInfo.price)
             {
-                Debug.LogWarning($"目前金币为{gold}，不足以购买塔...");
+                Debug.LogWarning($"目前金币数量为{gold}，不足以购买塔...");
                 return;
             }
-
-            // ReSharper disable once ComplexConditionExpression
-            if (level == Level.Upgraded && oldTower != null)
-            {
-                Destroy(oldTower.gameObject);
-            }
-
-            GameObject prefab = Resources.Load<GameObject>(towerInfo.prefabPath);
+            
+            // 如果是升级，需要销毁旧的塔
+            if (level == Level.Upgraded && oldTower != null && !string.IsNullOrEmpty(oldTowerPrefabName))
+                GameObjectPool.Instance.Put(oldTowerPrefabName, oldTower.gameObject);
+            
+            GameObject towerPrefab = Resources.Load<GameObject>(towerInfo.prefabPath);
             Vector3 copyPos = currTowerBasePos;
             copyPos.y = 0;
-            GameObject obj = Instantiate(prefab, copyPos, Quaternion.identity);
+            
+            GameObject obj = GameObjectPool.Instance.Get(towerPrefab.name, towerPrefab, copyPos, Quaternion.identity);
             Tower tower = obj.GetComponent<Tower>();
             tower.SetTowerInfo(towerInfo);
-
+            tower.SetPrefabName(towerPrefab.name);
+            
             towerBaseMap[currTowerBasePos] = tower; // 覆盖添加
 
             gold -= towerInfo.price;
@@ -112,18 +104,17 @@ namespace Game
         private void HandleMoreService(MoreType type)
         {
             Tower tower = towerBaseMap[currTowerBasePos];
-            int towerPrice = tower.price;
 
             if (type == MoreType.Upgrade) // 升级
             {
-                DoCreateTower(tower.type, Level.Upgraded, tower.transform);
+                DoCreateTower(tower.type, Level.Upgraded, tower.transform, tower.GetPrefabName());
             }
-            else if (type == MoreType.Sell) //出售
+            else if (type == MoreType.Sell) // 出售
             {
                 towerBaseMap.Remove(currTowerBasePos);
-                Destroy(tower.transform.gameObject);
+                GameObjectPool.Instance.Put(tower.GetPrefabName(), tower.gameObject);
 
-                gold += towerPrice;
+                gold += tower.price;
                 UIManager.Instance.UpdateGold(gold);
             }
         }

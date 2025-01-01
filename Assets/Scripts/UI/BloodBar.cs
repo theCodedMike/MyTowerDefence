@@ -14,18 +14,31 @@ namespace UI
         private Camera uiCamera;
 
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
-            bloodBar.value = 1f;
             mainCamera = Camera.main;
             uiCamera = Camera.allCameras[1];
-            transform.parent.GetComponent<Skeleton>().OnDamage = UpdateBloodBar;
             bloodBarPos = transform.parent.Find("BloodBarPos");
+            bloodBar.value = 1f;
         }
 
-        private void UpdateBloodBar(float value)
+        // 更新血量值
+        public void UpdateValue(float value)
         {
             bloodBar.value = value;
+        }
+
+        // 消失
+        public void Disappear()
+        {
+            gameObject.SetActive(false);
+        }
+
+        // 重置数据
+        public void ResetData()
+        {
+            gameObject.SetActive(true);
+            bloodBar.value = 1f;
         }
 
         // Update is called once per frame

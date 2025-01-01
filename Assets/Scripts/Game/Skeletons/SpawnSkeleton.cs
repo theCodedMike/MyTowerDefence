@@ -12,7 +12,7 @@ namespace Game.Skeletons
 
         private Transform startPoint;
         private GameObject[] skeletonPrefabs;
-        private List<Transform> aliveSkeletons = new(32);
+        private readonly List<Transform> aliveSkeletons = new(32);
 
 
         private void Awake()
@@ -35,23 +35,22 @@ namespace Game.Skeletons
                 return;
 
             if (Input.GetKeyDown(KeyCode.Space))
-            {
                 Spawn();
-            }
+            
         }
 
         private void Spawn()
         {
-            //int idx = Random.Range(0, skeletonPrefabs.Length);
-            int idx = 0;
+            int idx = Random.Range(0, skeletonPrefabs.Length);
             GameObject obj = GameObjectPool.Instance.Get(
-                skeletonPrefabs[idx].name, skeletonPrefabs[idx], startPoint, Quaternion.identity);
-            obj.GetComponent<Skeleton>().SetPrefabName(skeletonPrefabs[idx].name);
-
-            //GameObject obj = Instantiate(skeletonPrefabs[idx], start.position, Quaternion.identity);
+                skeletonPrefabs[idx].name, skeletonPrefabs[idx], startPoint.position, Quaternion.identity);
+            Skeleton skeleton = obj.GetComponent<Skeleton>();
+            skeleton.SetPrefabName(skeletonPrefabs[idx].name);
+            skeleton.SetAgentEnabled(true);
+            
             if (aliveSkeletons.Contains(obj.transform))
             {
-                Debug.LogError($"生成了重复的Skeleton？？？{obj.transform}");
+                Debug.LogError($"生成了重复的Skeleton??? - {obj.transform}");
                 throw new DuplicateNameException("重复的Transform");
             }
 

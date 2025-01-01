@@ -18,6 +18,8 @@ namespace Game.Towers
         private TowerType type; // 塔的类型
         private Level level; // 等级
         private GameObject bulletObj; // 子弹实例
+        private Laser laser;
+        private MyBullet bullet;
 
         public AudioSource audioSource;
         public AudioClip laserClip;
@@ -40,7 +42,7 @@ namespace Game.Towers
             List<Transform> aliveSkeletons = SpawnSkeleton.Instance.GetAliveSkeletons();
             if (aliveSkeletons.Count == 0)
             {
-                Debug.Log($"攻击状态下，目前没有僵尸...");
+                Debug.Log($"塔处于攻击状态下，目前没有僵尸...");
                 return;
             }
             Vector3 towerPosition = towerObj.transform.position;
@@ -49,14 +51,13 @@ namespace Game.Towers
                 aliveSkeletons.Find(skeleton => (skeleton.position - towerPosition).sqrMagnitude <= attackDistanceSqr);
             if (targetSkeleton is null)
             {
-                Debug.Log($"攻击状态下，塔周围{(Mathf.Sqrt(attackDistanceSqr))}米内没有可攻击的僵尸...");
+                Debug.Log($"塔处于攻击状态下，塔周围{(Mathf.Sqrt(attackDistanceSqr))}米内没有可攻击的僵尸...");
                 return;
             }
 
             Transform bodyPoint = targetSkeleton.Find("BodyPoint");
             towerObj.transform.LookAt(bodyPoint);
-
-
+            
             timer += Time.deltaTime;
             if (timer >= (1 / fireSpeed))
             {
@@ -65,7 +66,9 @@ namespace Game.Towers
                 Vector3 firePosition = towerObj.transform.Find("FirePoint").position;
                 TowerInfo towerInfo = TowerContainer.Instance.GetTowerInfo(type, level);
                 GameObject bulletPrefab = Resources.Load<GameObject>(towerInfo.bulletPath);
-                bulletObj = Object.Instantiate(bulletPrefab, firePosition, Quaternion.Euler(towerObj.transform.localEulerAngles));
+                bulletObj = GameObjectPool.Instance.Get(bulletPrefab.name, bulletPrefab, firePosition,
+                    Quaternion.Euler(towerObj.transform.localEulerAngles));
+                //bulletObj = Object.Instantiate(bulletPrefab, firePosition, Quaternion.Euler(towerObj.transform.localEulerAngles));
 
                 if (type == TowerType.LaserTower)
                 {
@@ -78,7 +81,8 @@ namespace Game.Towers
 
                     bulletObj.transform.LookAt(skeletonPosition); // 这里控制渲染出来的激光的朝向
 
-                    Laser laser = bulletObj.GetComponent<Laser>();
+                    laser = bulletObj.GetComponent<Laser>();
+                    laser.PrefabName = bulletPrefab.name;
                     laser.Direction = direction; // 这里控制发出的探测射线的朝向
                     laser.Damage = towerInfo.damage;
 
@@ -97,13 +101,17 @@ namespace Game.Towers
                     if (type == TowerType.KnifeTower && level == Level.Upgraded)
                     {
                         Vector3 firePosition2 = towerObj.transform.Find("FirePoint2").position;
-                        GameObject bulletObj2 = Object.Instantiate(bulletPrefab, firePosition2, Quaternion.Euler(towerObj.transform.localEulerAngles));
+                        GameObject bulletObj2 = GameObjectPool.Instance.Get(bulletPrefab.name, bulletPrefab,
+                            firePosition2, Quaternion.Euler(towerObj.transform.localEulerAngles));
+                        //GameObject bulletObj2 = Object.Instantiate(bulletPrefab, firePosition2, Quaternion.Euler(towerObj.transform.localEulerAngles));
                         MyBullet bullet2 = bulletObj2.GetComponent<MyBullet>();
+                        bullet2.PrefabName = bulletPrefab.name;
                         bullet2.SetVelocity(direction);
                         bullet2.Damage = towerInfo.damage;
                     }
 
-                    MyBullet bullet = bulletObj.GetComponent<MyBullet>();
+                    bullet = bulletObj.GetComponent<MyBullet>();
+                    bullet.PrefabName = bulletPrefab.name;
                     bullet.SetVelocity(direction);
                     bullet.Damage = towerInfo.damage;
                 }
@@ -111,10 +119,7 @@ namespace Game.Towers
 
             // ReSharper disable once ComplexConditionExpression
             if (type == TowerType.LaserTower && (timer >= (displayPercentage / fireSpeed)) && bulletObj != null)
-            {
-                Object.Destroy(bulletObj);
-            }
-
+                GameObjectPool.Instance.Put(laser.PrefabName, bulletObj);
         }
 
         /// <summary>
@@ -128,16 +133,15 @@ namespace Game.Towers
 
             // ReSharper disable once ComplexConditionExpression
             if (skeletons.All(skeleton => (skeleton.position - towerPosition).sqrMagnitude > attackDistanceSqr))
-            {
                 fsmSystem.DoTransition(Transition.TowerLoseSkeleton);
-            }
+            
         }
 
         public override void DoAfterLeaveAction()
         {
             // ReSharper disable once ComplexConditionExpression
-            if (type == TowerType.LaserTower && bulletObj != null)
-                Object.Destroy(bulletObj);
+            if (type == TowerType.LaserTower && bulletObj != null && bulletObj.activeSelf)
+                GameObjectPool.Instance.Put(laser.PrefabName, bulletObj);
         }
     }
 }

@@ -19,14 +19,11 @@ namespace Game.Bullets
 
         [SerializeField]
         private GameObject trf_scaleController;         //eff_scale:GameObject
-
-
+        
         public Vector3 Direction { private get; set; }// 激光朝向
-        public int Damage
-        {
-            private get; set;
-        }// 激光的伤害值
-
+        public int Damage { private get; set; }// 激光的伤害值
+        public string PrefabName { get; set; } // 预制体的名字，用作对象池的key
+        
         void Start()
         {
 
@@ -109,15 +106,13 @@ namespace Game.Bullets
                     for (int i = 0; i < 10; i++)
                     {
                         //Hit Effect Instance
-                        GameObject ins_hiteff = (GameObject)Instantiate(hit_effect, hit.point, Quaternion.identity);
+                        GameObject ins_hiteff = Instantiate(hit_effect, hit.point, Quaternion.identity);
                         ins_hiteff.transform.localScale = new Vector3(OvarAll_Size, OvarAll_Size, OvarAll_Size);
                     }
 
                     // 业务逻辑
                     if (hit.transform.CompareTag("Skeleton"))
-                    {
                         hit.transform.GetComponent<Skeleton>().Damage(Damage);
-                    }
                 }
             }
             else

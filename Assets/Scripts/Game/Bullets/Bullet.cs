@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using Utils;
 
 namespace Game.Bullets
 {
@@ -11,13 +13,18 @@ namespace Game.Bullets
 
         private Rigidbody rb;
         public int Damage { get; set; }
-
-        // Start is called before the first frame update
-        void Start()
+        public string PrefabName { get; set; } // 预制体的名字，用作对象池的key
+        
+        
+        private void Awake()
         {
             rb = GetComponent<Rigidbody>();
         }
 
+        private void OnEnable()
+        {
+            Invoke(nameof(DestroyBullet), 5f);
+        }
 
         public void SetVelocity(Vector3 dir)
         {
@@ -30,14 +37,13 @@ namespace Game.Bullets
         private void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("Ground"))
-            {
-                Invoke(nameof(Destroy), 1f);
-            }
+                Invoke(nameof(DestroyBullet), 1f);
         }
 
-        private void Destroy()
+        private void DestroyBullet()
         {
-            Destroy(this.gameObject);
+            if(gameObject.activeSelf)
+                GameObjectPool.Instance.Put(PrefabName, gameObject);
         }
     }
 }
